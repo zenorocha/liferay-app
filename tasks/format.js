@@ -14,7 +14,7 @@ gulp.task('format-css', function() {
     .pipe(gulp.dest('app/styles'));
 });
 
-gulp.task('format-javascript', function() {
+gulp.task('format-js', function() {
   return gulp.src(['tasks/*.js', 'app/scripts/**/*.js'])
     .pipe(plugins.plumber(util.logError))
     .pipe(plugins.esformatter())
@@ -22,4 +22,4 @@ gulp.task('format-javascript', function() {
     .pipe(plugins.if('**/app/scripts/**/*.js', gulp.dest('app/scripts')));
 });
 
-gulp.task('format', ['format-css', 'format-javascript']);
+gulp.task('format', ['format-css', 'format-js']);

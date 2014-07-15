@@ -45,7 +45,7 @@ gulp.task('build-css', ['build-images'], function() {
     .pipe(gulp.dest('dist/styles'));
 });
 
-gulp.task('build-javascript', function() {
+gulp.task('build-js', function() {
   return gulp.src('app/scripts/**/*.js')
     .pipe(plugins.plumber(util.logError))
     .pipe(plugins.uglify({
@@ -55,5 +55,5 @@ gulp.task('build-javascript', function() {
 });
 
 gulp.task('build', ['clean'], function(cb) {
-  runSequence(['build-images', 'build-icons', 'build-css', 'build-javascript'], cb);
+  runSequence(['build-images', 'build-icons', 'build-css', 'build-js'], cb);
 });
