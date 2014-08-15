@@ -3,7 +3,7 @@
 exports.get = function(req, res) {
   var contents = this.render('views.home', {
     content: this.render('views.contentHome', {
-      userName: 'Eduardo Lundgren'
+      userName: req.params.name
     }),
     title: 'Home'
   });

@@ -113,6 +113,13 @@ module.exports = {
     outputTemplateAsJavascript: false,
 
     /**
+     * The format being used for routes. Regex is used by default, but all formats
+     * from madvoc are supported, so this can be set to any of the formats defined
+     * there.
+     */
+    routeFormat: null,
+
+    /**
      * The path of the files that contain the translations to be used by the app.
      */
     translationsFilepath: null

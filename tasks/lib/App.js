@@ -2,9 +2,11 @@
 
 var express = require('express');
 var http = require('http');
+var madvoc = require('madvoc-route');
 var path = require('path');
 var BaseAction = require('./BaseAction');
 var ClassLoader = require('./ClassLoader');
+var config = require('./ProductFlavors').generateFlavoredConfig();
 
 /**
  * Provides an application wrapper class to some engine, by default for
@@ -197,14 +199,17 @@ App.prototype.setRouteConfigurator = function(routeConfigurator) {
       throw new Error('Invalid route ' + routeConfigurator.getRoutesFilepath() + ' ' + route.toString());
     }
 
+    var macroManager = new madvoc.RouteMacroManager(route.getPath(), config.routeFormat);
+    var routePath = macroManager.replaceMacros(':$1($2)', ':$1');
+
     action.app = this;
     action.setTemplateEngine(this.getTemplateEngine());
 
     if (route.getHttpMethod()) {
       var verb = route.getHttpMethod().toLowerCase();
-      this.engine[verb](route.getPath(), middleware.bind(action));
+      this.engine[verb](routePath, middleware.bind(action));
     } else {
-      this.engine.use(route.getPath(), middleware.bind(action));
+      this.engine.use(routePath, middleware.bind(action));
     }
   }
 };

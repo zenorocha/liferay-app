@@ -8,6 +8,11 @@
         <note priority="1" from="description">Gives thanks</note>
         <note priority="1" from="meaning">male</note>
       </trans-unit>
+      <trans-unit id="5221938886751387620" datatype="html">
+        <source>Hello!</source>
+        <target>Olá!</target>
+        <note priority="1" from="description">Greets the logged in user</note>
+      </trans-unit>
       <trans-unit id="6520744808323231271" datatype="html">
         <source>Thanks.</source>
         <target>Obrigada.</target>

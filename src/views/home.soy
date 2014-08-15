@@ -23,7 +23,11 @@
  */
 {template .contentHome}
 <div>
-  {msg desc="Greets the logged in user"}Hello {$userName}!{/msg}
+  {if $userName}
+    {msg desc="Greets the logged in user"}Hello {$userName}!{/msg}
+  {else}
+    {msg desc="Greets the logged in user"}Hello!{/msg}
+  {/if}
 </div>
 {/template}
 

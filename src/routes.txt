@@ -1,3 +1,4 @@
+/home/${name:[a-zA-Z]+}  actions.HomeAction#get
 /home  actions.HomeAction#get
 
 /about  actions.AboutAction#get
