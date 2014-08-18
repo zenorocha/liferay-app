@@ -18,20 +18,6 @@ function SoyTemplateEngine() {
 util.inherits(SoyTemplateEngine, TemplateEngine);
 
 /**
- * Holds the default template name.
- * @type {String}
- */
-SoyTemplateEngine.prototype.defaultLayout = 'layout';
-
-/**
- * Gets the default template name.
- * @return {String}
- */
-SoyTemplateEngine.prototype.getDefaultLayout = function() {
-  return this.defaultLayout;
-};
-
-/**
  * @inheritDoc
  */
 SoyTemplateEngine.prototype.compileTemplates = function(searchPath, locale, options, callback) {
@@ -84,18 +70,9 @@ SoyTemplateEngine.prototype.render = function(templateName, templateData, locale
   }
 
   // Injects template contents into layout data.
-  injectedData[this.defaultLayout] = templateFn(templateData, null, injectedData);
+  templateData.content = templateFn(templateData, null, injectedData);
 
   return layoutFn(templateData, null, injectedData);
-};
-
-/**
- * Sets default layout name. Relevant when a shared template is used to wrap
- * other templates such as adding header, footer etc.
- * @param {String} defaultLayout
- */
-SoyTemplateEngine.prototype.setDefaultLayout = function(defaultLayout) {
-  this.defaultLayout = defaultLayout;
 };
 
 module.exports = SoyTemplateEngine;
