@@ -3,6 +3,7 @@
 var fs = require('fs');
 var gulp = require('gulp');
 var path = require('path');
+var AppEvents = require('./lib/AppEvents');
 var config = require('./lib/ProductFlavors').generateFlavoredConfig();
 
 gulp.task('watch', ['serve'], function(cb) {
@@ -30,4 +31,8 @@ gulp.task('watch', ['serve'], function(cb) {
   gulp.watch(config.globStyle, ['build-styles']);
   gulp.watch(config.globTemplate, ['build-templates']);
   gulp.watch(config.translationsFilepath.replace('{LOCALE}', '*'), ['build-templates']);
+
+  gulp.watch('dist/routes.txt', function() {
+    AppEvents.emit('routesChange');
+  });
 });

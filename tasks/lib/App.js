@@ -167,6 +167,10 @@ App.prototype.setLocale = function(locale) {
 App.prototype.setRouteConfigurator = function(routeConfigurator) {
   this.routeConfigurator = routeConfigurator;
 
+  // Setting the router to null will cause express to create a new one when it's
+  // needed again, which guarantees that only the route handlers added here will work.
+  this.getEngine()._router = null;
+
   // Register routes into app engine.
   var routes = this.routeConfigurator.getRoutes();
   for (var i = 0; i < routes.length; i++) {
