@@ -1,5 +1,9 @@
 {
   "private": true,
+  "scripts": {
+    "test": "mocha test/unit/**/*.js",
+    "test-coverage": "istanbul cover _mocha -- test/unit/**/*.js"
+  },
   "devDependencies": {
     "event-stream": "^3.1.7",
     "express": "^4.8.2",

@@ -17,7 +17,12 @@ gulp.task('format-scripts', function() {
     .pipe(plugins.esformatter())
     .pipe(gulp.dest('tasks'));
 
-  return merge(scripts, tasks);
+  var tests = gulp.src('test/**/*.js')
+    .pipe(plugins.plumber(util.logError))
+    .pipe(plugins.esformatter())
+    .pipe(gulp.dest('test'));
+
+  return merge(scripts, tasks, tests);
 });
 
 gulp.task('format-styles', function() {
