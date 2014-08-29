@@ -14,4 +14,10 @@ var AppEvents = new EventEmitter();
  * @event routesChange
  */
 
+/**
+ * Fired when any of the app's js scripts have been changed.
+ *
+ * @event scriptsChange
+ */
+
 module.exports = AppEvents;

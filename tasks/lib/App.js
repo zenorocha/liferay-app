@@ -119,6 +119,33 @@ App.prototype.getTemplateEngine = function() {
 };
 
 /**
+ * Handles the given route, running the appropriate js code for it.
+ * @param {Object} route
+ */
+App.prototype.handleRoute = function(route) {
+  var Class = this.classLoader.loadClass(route.getActionClass());
+  var routeActionMethod = route.getActionMethod();
+
+  var action;
+  if (typeof Class === 'function') {
+    action = new Class();
+  } else {
+    action = new BaseAction();
+    action[routeActionMethod] = Class[routeActionMethod];
+  }
+
+  action.app = this;
+  action.setTemplateEngine(this.getTemplateEngine());
+
+  var fn = action[routeActionMethod];
+  if (!fn) {
+    throw new Error('Invalid route ' + this.getRouteConfigurator().getRoutesFilepath() + ' ' + route.toString());
+  }
+
+  fn.apply(action, Array.prototype.slice.call(arguments, 1));
+};
+
+/**
  * Serves a folder as static.
  * @param {String} filepath File or directory path to be served.
  * @param {String} mountPath Mount path to serve the filepath.
@@ -176,9 +203,7 @@ App.prototype.setRouteConfigurator = function(routeConfigurator) {
   for (var i = 0; i < routes.length; i++) {
     var route = routes[i];
 
-    var actionClass = route.getActionClass();
-    var actionMethod = route.getActionMethod();
-    if (!actionClass) {
+    if (!route.getActionClass()) {
       // If there is no action class, tries to resolve the alias as a static
       // file path.
       var alias = route.getAlias();
@@ -188,32 +213,14 @@ App.prototype.setRouteConfigurator = function(routeConfigurator) {
       continue;
     }
 
-    var Class = this.classLoader.loadClass(actionClass);
-
-    var action;
-    if (typeof Class === 'function') {
-      action = new Class();
-    } else {
-      action = new BaseAction();
-      action[actionMethod] = Class[actionMethod];
-    }
-
-    var middleware = action[actionMethod];
-    if (!middleware) {
-      throw new Error('Invalid route ' + routeConfigurator.getRoutesFilepath() + ' ' + route.toString());
-    }
-
     var macroManager = new madvoc.RouteMacroManager(route.getPath(), config.routeFormat);
     var routePath = macroManager.replaceMacros(':$1($2)', ':$1');
 
-    action.app = this;
-    action.setTemplateEngine(this.getTemplateEngine());
-
     if (route.getHttpMethod()) {
       var verb = route.getHttpMethod().toLowerCase();
-      this.engine[verb](routePath, middleware.bind(action));
+      this.engine[verb](routePath, this.handleRoute.bind(this, route));
     } else {
-      this.engine.use(routePath, middleware.bind(action));
+      this.engine.use(routePath, this.handleRoute.bind(this, route));
     }
   }
 };

@@ -33,4 +33,8 @@ gulp.task('serve', ['build'], function() {
     gutil.log('Routing', gutil.colors.cyan('routes.txt'));
     app.setRouteConfigurator(new madvoc.RouteConfigurator('dist/routes.txt'));
   });
+  AppEvents.on('scriptsChange', function() {
+    gutil.log('Clearing ClassLoader cache');
+    app.getClassLoader().clearCache();
+  });
 });

@@ -35,4 +35,7 @@ gulp.task('watch', ['serve'], function(cb) {
   gulp.watch('dist/routes.txt', function() {
     AppEvents.emit('routesChange');
   });
+  gulp.watch('dist/**/*.js', function() {
+    AppEvents.emit('scriptsChange');
+  });
 });
