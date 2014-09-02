@@ -6,7 +6,6 @@ var madvoc = require('madvoc-route');
 var path = require('path');
 var BaseAction = require('./BaseAction');
 var ClassLoader = require('./ClassLoader');
-var config = require('./ProductFlavors').generateFlavoredConfig();
 
 /**
  * Provides an application wrapper class to some engine, by default for
@@ -16,6 +15,8 @@ var config = require('./ProductFlavors').generateFlavoredConfig();
 function App() {
   this.classLoader = new ClassLoader();
   this.classLoader.setBasePath('dist');
+
+  this.engine = express();
 }
 
 /**
@@ -28,7 +29,7 @@ App.prototype.classLoader = null;
  * Holds the application engine, by default for express.
  * @type {Function}
  */
-App.prototype.engine = express();
+App.prototype.engine = null;
 
 /**
  * Holds the http server reference returned by `http.createServer`.
@@ -47,6 +48,12 @@ App.prototype.locale = null;
  * @type {madvoc.RouteConfigurator}
  */
 App.prototype.routeConfigurator = null;
+
+/**
+ * The format being used for routes.
+ * @type {Number}
+ */
+App.prototype.routeFormat = null;
 
 /**
  * Holds the server port information.
@@ -100,6 +107,14 @@ App.prototype.getLocale = function() {
  */
 App.prototype.getRouteConfigurator = function() {
   return this.routeConfigurator;
+};
+
+/**
+ * Gets the format being used for routes.
+ * @return {Number}
+ */
+App.prototype.getRouteFormat = function() {
+  return this.routeFormat;
 };
 
 /**
@@ -212,7 +227,7 @@ App.prototype.setRouteConfigurator = function(routeConfigurator) {
       continue;
     }
 
-    var macroManager = new madvoc.RouteMacroManager(route.getPath(), config.routeFormat);
+    var macroManager = new madvoc.RouteMacroManager(route.getPath(), this.getRouteFormat());
     var routePath = macroManager.replaceMacros(':$1($2)', ':$1');
 
     if (route.getHttpMethod()) {
@@ -222,6 +237,14 @@ App.prototype.setRouteConfigurator = function(routeConfigurator) {
       this.engine.use(routePath, this.handleRoute.bind(this, route));
     }
   }
+};
+
+/**
+ * Sets the route format.
+ * @param {Number} routeFormat
+ */
+App.prototype.setRouteFormat = function(routeFormat) {
+  this.routeFormat = routeFormat;
 };
 
 /**
@@ -271,8 +294,12 @@ App.prototype.stop = function() {
  */
 App.prototype.updateLocale = function(locale, callback) {
   if (this.locale === locale) {
-    process.nextTick(callback);
+    if (callback) {
+      process.nextTick(callback);
+    }
+    return;
   }
+
   this.setLocale(locale);
   this.getTemplateEngine().compileTemplates('dist', this.getLocale(), {}, callback);
 };

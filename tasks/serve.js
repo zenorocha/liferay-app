@@ -13,6 +13,7 @@ gulp.task('serve', ['build'], function() {
   var app = new App();
 
   app.setTemplateEngine(new SoyTemplateEngine());
+  app.setRouteFormat(config.routeFormat);
 
   gutil.log('Routing', gutil.colors.cyan('routes.txt'));
   app.setRouteConfigurator(new madvoc.RouteConfigurator('dist/routes.txt'));
