@@ -4,7 +4,6 @@ var fs = require('fs');
 var path = require('path');
 var soynode = require('soynode');
 var util = require('util');
-var config = require('./ProductFlavors').generateFlavoredConfig();
 var TemplateEngine = require('./TemplateEngine');
 
 /**
@@ -18,6 +17,20 @@ function SoyTemplateEngine() {
 util.inherits(SoyTemplateEngine, TemplateEngine);
 
 /**
+ * The path of the files that contain the translations to be used by the app.
+ * @type {String}
+ */
+SoyTemplateEngine.prototype.translationsFilepath = null;
+
+/**
+ * Gets the path for the translations file being used by this template engine.
+ * @return {String}
+ */
+SoyTemplateEngine.prototype.getTranslationsFilePath = function() {
+  return this.translationsFilepath;
+};
+
+/**
  * @inheritDoc
  */
 SoyTemplateEngine.prototype.compileTemplates = function(searchPath, locale, options, callback) {
@@ -26,8 +39,8 @@ SoyTemplateEngine.prototype.compileTemplates = function(searchPath, locale, opti
   if (!options.locales) {
     options.locales = locale ? [locale] : null;
   }
-  if (!options.messageFilePathFormat && config.translationsFilepath) {
-    options.messageFilePathFormat = path.join(process.cwd(), config.translationsFilepath);
+  if (!options.messageFilePathFormat && this.getTranslationsFilePath()) {
+    options.messageFilePathFormat = path.resolve(process.cwd(), this.getTranslationsFilePath());
   }
 
   soynode.setOptions(options);
@@ -73,6 +86,14 @@ SoyTemplateEngine.prototype.render = function(templateName, templateData, locale
   templateData.content = templateFn(templateData, null, injectedData);
 
   return layoutFn(templateData, null, injectedData);
+};
+
+/**
+ * Sets the path for the translations file being used by this template engine.
+ * @param {String} translationsFilepath
+ */
+SoyTemplateEngine.prototype.setTranslationsFilePath = function(translationsFilepath) {
+  this.translationsFilepath = translationsFilepath;
 };
 
 module.exports = SoyTemplateEngine;

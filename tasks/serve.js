@@ -12,7 +12,10 @@ var config = require('./lib/ProductFlavors').generateFlavoredConfig();
 gulp.task('serve', ['build'], function() {
   var app = new App();
 
-  app.setTemplateEngine(new SoyTemplateEngine());
+  var templateEngine = new SoyTemplateEngine();
+  templateEngine.setTranslationsFilePath(config.translationsFilepath);
+  app.setTemplateEngine(templateEngine);
+
   app.setRouteFormat(config.routeFormat);
 
   gutil.log('Routing', gutil.colors.cyan('routes.txt'));
