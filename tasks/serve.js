@@ -5,7 +5,7 @@ var gutil = require('gulp-util');
 var madvoc = require('madvoc-route');
 var path = require('path');
 var App = require('./lib/App');
-var AppEvents = require('./lib/AppEvents');
+var AppEventEmitter = require('./lib/AppEventEmitter');
 var SoyTemplateEngine = require('./lib/SoyTemplateEngine');
 var config = require('./lib/ProductFlavors').generateFlavoredConfig();
 
@@ -29,12 +29,11 @@ gulp.task('serve', ['build'], function() {
     gutil.log('Serving', gutil.colors.cyan('http://localhost:' + app.getServerPort()));
   });
 
-  AppEvents.on('routesChange', function() {
-    gutil.log('Routing', gutil.colors.cyan('routes.txt'));
+  AppEventEmitter.on('resourcesUpdated', function() {
+    gutil.log('Rerouting', gutil.colors.cyan('routes.txt'));
     app.setRouteConfigurator(new madvoc.RouteConfigurator('dist/routes.txt'));
-  });
-  AppEvents.on('scriptsChange', function() {
-    gutil.log('Clearing ClassLoader cache');
+
+    gutil.log('Clearing class loader cache');
     app.getClassLoader().clearCache();
   });
 });

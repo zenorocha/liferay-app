@@ -4,6 +4,7 @@ var gulp = require('gulp');
 var plugins = require('gulp-load-plugins')();
 var runSequence = require('run-sequence');
 var util = require('./lib/util');
+var AppEventEmitter = require('./lib/AppEventEmitter');
 var config = require('./lib/ProductFlavors').generateFlavoredConfig();
 
 gulp.task('build-compass', function() {
@@ -21,7 +22,9 @@ gulp.task('build-compass', function() {
 });
 
 gulp.task('build-copy', function() {
-  return gulp.src('src/**').pipe(gulp.dest('dist'));
+  return gulp.src('src/**').pipe(gulp.dest('dist')).on('end', function() {
+    AppEventEmitter.emit('resourcesUpdated');
+  });
 });
 
 gulp.task('build-styles', function() {
