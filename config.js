@@ -7,6 +7,12 @@ module.exports = {
    */
   defaultConfig: {
     /**
+     * If front matter variables should be applied to the contents of the files
+     * they are defined on.
+     */
+    applyFrontMatterVariables: true,
+
+    /**
      * Autoprefixer parses CSS files and adds vendor prefixes to CSS rules.
      */
     autoprefixer: [

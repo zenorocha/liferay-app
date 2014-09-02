@@ -1,12 +1,16 @@
 'use strict';
 
+var es = require('event-stream');
+var gulp = require('gulp');
 var gutil = require('gulp-util');
 var lazypipe = require('lazypipe');
 var plugins = require('gulp-load-plugins')();
 var config = require('./ProductFlavors').generateFlavoredConfig();
+var SoyTemplateEngine = require('./SoyTemplateEngine');
 
 module.exports = {
   buildCss: buildCssPipeline(),
+  buildFrontMatter: buildFrontMatterPipeline(),
   buildHtml: buildHtmlPipeline(),
   buildHtmlResources: buildHtmlResourcePipeline(),
   buildJavaScript: buildJavaScriptPipeline(),
@@ -14,11 +18,50 @@ module.exports = {
   logError: logError
 };
 
+function applyFrontMatterVariables() {
+  var soyEngine = new SoyTemplateEngine();
+
+  return es.map(function(file, cb) {
+    file.contents = new Buffer(soyEngine.render(
+      file.soyNamespace + '.fm',
+      file.frontMatter,
+      config.defaultLocale,
+      null,
+      {
+        config: config
+      }
+    ));
+    cb(null, file);
+  });
+}
+
 function buildCssPipeline() {
   return lazypipe()
     .pipe(function() {
       return plugins.if('*.css', plugins.autoprefixer(config.autoprefixer).pipe(plugins.csso()));
     });
+}
+
+function buildFrontMatterPipeline() {
+  var counter = 0;
+
+  return lazypipe()
+    .pipe(plugins.if, '*.html', plugins.wrapper({
+      header: function(file) {
+        file.soyNamespace = 'temp' + counter++;
+        return '{namespace ' + file.soyNamespace + '}\n' + getSoyParamsDoc(file) + '{template .fm}\n';
+      },
+      footer: '\n{/template}'
+    }))
+    .pipe(plugins.if, '*.html', gulp.dest('dist'))
+    .pipe(plugins.soynode, {
+      loadCompiledTemplates: true,
+      locales: config.defaultLocale ? [config.defaultLocale] : null,
+      messageFilePathFormat: config.translationsFilepath
+    })
+    .pipe(plugins.ignore.exclude, '*.soy')
+    .pipe(plugins.ignore.exclude, '*.soy.js')
+    .pipe(plugins.if, '*.html', applyFrontMatterVariables());
 }
 
 function buildHtmlPipeline() {
@@ -53,6 +96,20 @@ function buildMarkdownPipeline() {
     .pipe(function() {
       return plugins.if('*.md', plugins.markdown());
     });
+}
+
+function getSoyParamsDoc(file) {
+  var content = file.contents.toString();
+  var regex = new RegExp('{\\$([^{}]+)}', 'g');
+  var matched;
+  var paramsDoc = '';
+  while ((matched = regex.exec(content))) {
+    if (matched[1].indexOf('ij.') === -1) {
+      paramsDoc += '@param ' + matched[1] + '\n';
+    }
+  }
+
+  return '/**\n' + paramsDoc + '**/\n';
 }
 
 function logError(err) {
