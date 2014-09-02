@@ -4,9 +4,7 @@ var es = require('event-stream');
 var gulp = require('gulp');
 var gutil = require('gulp-util');
 var lazypipe = require('lazypipe');
-var path = require('path');
 var plugins = require('gulp-load-plugins')();
-var soynode = require('soynode');
 var config = require('./ProductFlavors').generateFlavoredConfig();
 var SoyTemplateEngine = require('./SoyTemplateEngine');
 
@@ -19,6 +17,23 @@ module.exports = {
   buildMarkdown: buildMarkdownPipeline(),
   logError: logError
 };
+
+function applyFrontMatterVariables() {
+  var soyEngine = new SoyTemplateEngine();
+
+  return es.map(function(file, cb) {
+    file.contents = new Buffer(soyEngine.render(
+      file.soyNamespace + '.fm',
+      file.frontMatter,
+      config.defaultLocale,
+      null,
+      {
+        config: config
+      }
+    ));
+    cb(null, file);
+  });
+}
 
 function buildCssPipeline() {
   return lazypipe()
@@ -34,7 +49,7 @@ function buildFrontMatterPipeline() {
     .pipe(plugins.if, '*.html', plugins.wrapper({
       header: function(file) {
         file.soyNamespace = 'temp' + counter++;
-        return '{namespace ' + file.soyNamespace + '}\n' + getParamsDoc(file) + '{template .fm}\n';
+        return '{namespace ' + file.soyNamespace + '}\n' + getSoyParamsDoc(file) + '{template .fm}\n';
       },
       footer: '\n{/template}'
     }))
@@ -83,6 +98,20 @@ function buildMarkdownPipeline() {
     });
 }
 
+function getSoyParamsDoc(file) {
+  var content = file.contents.toString();
+  var regex = new RegExp('{\\$([^{}]+)}', 'g');
+  var matched;
+  var paramsDoc = '';
+  while ((matched = regex.exec(content))) {
+    if (matched[1].indexOf('ij.') === -1) {
+      paramsDoc += '@param ' + matched[1] + '\n';
+    }
+  }
+
+  return '/**\n' + paramsDoc + '**/\n';
+}
+
 function logError(err) {
   if (err.fileName) {
     gutil.log(gutil.colors.red('Error'), err.fileName, lookupErrorLine(err));
@@ -110,29 +139,4 @@ function lookupErrorLine(err) {
   }
 
   return line + ':' + position;
-}
-
-function applyFrontMatterVariables() {
-  var soyEngine = new SoyTemplateEngine();
-
-  return es.map(function(file, cb) {
-    file.contents = new Buffer(soyEngine.render(
-      file.soyNamespace + '.fm',
-      file.frontMatter,
-      config.defaultLocale
-    ));
-    cb(null, file);
-  });
-}
-
-function getParamsDoc(file) {
-  var content = file.contents.toString();
-  var regex = new RegExp('{\\$([^{}]+)}', 'g');
-  var matched;
-  var paramsDoc = '';
-  while (matched = regex.exec(content)) {
-    paramsDoc += '@param ' + matched[1] + '\n';
-  }
-
-  return '/**\n' + paramsDoc + '**/\n';
 }

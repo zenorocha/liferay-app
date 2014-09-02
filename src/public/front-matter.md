@@ -1,7 +1,7 @@
 ---
 layout: views.home
 title: Using Front Matter
-extraContent: More content here.
+foo: More content here.
 ---
 
 {$title}
@@ -17,7 +17,7 @@ regular paragraph.
 The quick brown fox jumped over the lazy
 dog's back.
 
-{$extraContent}
+{$foo}
 
 ### Header 3
 
