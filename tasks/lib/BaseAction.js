@@ -14,17 +14,11 @@ function BaseAction() {
 BaseAction.prototype.app = null;
 
 /**
- * Holds template engine reference.
- * @type {TemplateEngine}
- */
-BaseAction.prototype.templateEngine = null;
-
-/**
  * Gets the template engine reference.
  * @return {TemplateEngine}
  */
 BaseAction.prototype.getTemplateEngine = function() {
-  return this.templateEngine;
+  return this.app.getTemplateEngine();
 };
 
 /**
@@ -34,10 +28,10 @@ BaseAction.prototype.getTemplateEngine = function() {
  * @return {String} Returns the rendered template.
  */
 BaseAction.prototype.render = function(templateName, templateData) {
-  if (!this.templateEngine) {
-    throw new Error('Template engine not set.');
+  if (!this.app) {
+    throw new Error('App instance not set.');
   }
-  return this.templateEngine.render(templateName, templateData, this.app.getLocale());
+  return this.getTemplateEngine().render(templateName, templateData, this.app.getLocale());
 };
 
 /**
@@ -47,15 +41,10 @@ BaseAction.prototype.render = function(templateName, templateData) {
  * @param {Function} callback
  */
 BaseAction.prototype.updateLocale = function(locale, callback) {
+  if (!this.app) {
+    throw new Error('App instance not set.');
+  }
   this.app.updateLocale(locale, callback);
-};
-
-/**
- * Sets the template engine reference.
- * @param {TemplateEngine} templateEngine
- */
-BaseAction.prototype.setTemplateEngine = function(templateEngine) {
-  this.templateEngine = templateEngine;
 };
 
 module.exports = BaseAction;

@@ -135,7 +135,6 @@ App.prototype.handleRoute = function(route) {
   }
 
   action.app = this;
-  action.setTemplateEngine(this.getTemplateEngine());
 
   var fn = action[routeActionMethod];
   if (!fn) {
