@@ -128,7 +128,7 @@ module.exports = {
     /**
      * The path of the files that contain the translations to be used by the app.
      */
-    translationsFilepath: null
+    translationsFilepath: 'src/translations/translations_{LOCALE}.xlf'
   },
 
   /***
