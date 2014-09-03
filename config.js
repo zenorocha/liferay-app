@@ -76,7 +76,7 @@ module.exports = {
      * The path of the file that will contain all the messages extracted from
      * the app by the `lang` gulp task.
      */
-    extractedMessagesFilepath: 'src/translations/extractedMessages.xlf',
+    extractedMessagesFilepath: 'src/translations/default.xlf',
 
     /**
      * Reduces payload size of HTML document.
