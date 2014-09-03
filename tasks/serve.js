@@ -33,6 +33,9 @@ gulp.task('serve', ['build'], function() {
     gutil.log('Rerouting', gutil.colors.cyan('routes.txt'));
     app.setRouteConfigurator(new madvoc.RouteConfigurator('dist/routes.txt'));
 
+    gutil.log('Serving static', gutil.colors.cyan('public/'));
+    app.serveStatic('/', path.join(process.cwd(), 'dist/public'));
+
     gutil.log('Clearing class loader cache');
     app.getClassLoader().clearCache();
   });
