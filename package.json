@@ -37,6 +37,7 @@
     "lazypipe": "^0.2.1",
     "madvoc-route": "^1.0.0",
     "merge-stream": "^0.1.5",
+    "mockery": "^1.4.0",
     "require-dir": "^0.1.0",
     "run-sequence": "^0.3.6",
     "sinon": "^1.10.3",

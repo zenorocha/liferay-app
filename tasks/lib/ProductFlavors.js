@@ -65,7 +65,7 @@ ProductFlavors.prototype.generateConfig = function(opt_flavor) {
     for (i in app.defaultConfig) {
       config.defaultConfig[i] = app.defaultConfig[i];
     }
-    for (i in app.defaultConfig) {
+    for (i in app.productFlavors) {
       config.productFlavors[i] = app.productFlavors[i];
     }
   } catch (err) {}
