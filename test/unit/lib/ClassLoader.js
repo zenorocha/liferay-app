@@ -7,7 +7,7 @@ describe('ClassLoader', function() {
   it('should load classes correctly', function() {
     var classLoader = new ClassLoader();
 
-    var TestModule = classLoader.loadClass('test/unit/lib/assets/TestModule');
+    var TestModule = classLoader.loadClass('test/unit/lib/fixture/TestModule');
     assert.strictEqual(
       1,
       TestModule.test1,
@@ -17,12 +17,12 @@ describe('ClassLoader', function() {
 
   it('should work with the given base path', function() {
     var classLoader = new ClassLoader();
-    classLoader.setBasePath('test/unit/lib/assets');
+    classLoader.setBasePath('test/unit/lib/fixture');
 
     var TestModule = classLoader.loadClass('TestModule');
 
     assert.strictEqual(
-      'test/unit/lib/assets',
+      'test/unit/lib/fixture',
       classLoader.getBasePath(),
       'Base path should have been updated'
     );
@@ -37,8 +37,8 @@ describe('ClassLoader', function() {
   it('should cache classes', function() {
     var classLoader = new ClassLoader();
 
-    var TestModule = classLoader.loadClass('test/unit/lib/assets/TestModule');
-    var TestModule2 = classLoader.loadClass('test/unit/lib/assets/TestModule');
+    var TestModule = classLoader.loadClass('test/unit/lib/fixture/TestModule');
+    var TestModule2 = classLoader.loadClass('test/unit/lib/fixture/TestModule');
 
     assert.strictEqual(
       TestModule,
@@ -50,9 +50,9 @@ describe('ClassLoader', function() {
   it('should clear cache when requested', function() {
     var classLoader = new ClassLoader();
 
-    var TestModule = classLoader.loadClass('test/unit/lib/assets/TestModule');
+    var TestModule = classLoader.loadClass('test/unit/lib/fixture/TestModule');
     classLoader.clearCache();
-    var TestModule2 = classLoader.loadClass('test/unit/lib/assets/TestModule');
+    var TestModule2 = classLoader.loadClass('test/unit/lib/fixture/TestModule');
 
     assert.notStrictEqual(
       TestModule,
@@ -65,10 +65,10 @@ describe('ClassLoader', function() {
     var classLoader = new ClassLoader();
 
     assert.throws(function() {
-      classLoader.loadClass('test/unit/lib/assets/TestModule2');
+      classLoader.loadClass('test/unit/lib/fixture/TestModule2');
     },
       Error,
-      'Class test/lib/assets/TestModule2 not found.'
+      'Class test/lib/fixture/TestModule2 not found.'
     );
   });
 });

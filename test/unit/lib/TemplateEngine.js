@@ -16,7 +16,6 @@ describe('TemplateEngine', function() {
     assert.doesNotThrow(function() {
       templateEngine.compileTemplates();
       templateEngine.render();
-    }
-    );
+    });
   });
 });
