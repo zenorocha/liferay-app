@@ -3,7 +3,7 @@
 var gulp = require('gulp');
 var config = require('./lib/ProductFlavors').generateFlavoredConfig();
 
-gulp.task('watch', ['serve'], function(cb) {
+gulp.task('watch', ['serve'], function(done) {
   gulp.watch('src/**', ['build-copy']);
   gulp.watch(config.globHtml, ['build-html']);
   gulp.watch(config.globIcon, ['build-icons']);

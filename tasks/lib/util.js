@@ -21,7 +21,7 @@ module.exports = {
 function applyFrontMatterVariables() {
   var soyEngine = new SoyTemplateEngine();
 
-  return es.map(function(file, cb) {
+  return es.map(function(file, done) {
     file.contents = new Buffer(soyEngine.render(
       file.soyNamespace + '.fm',
       file.frontMatter,
@@ -31,7 +31,7 @@ function applyFrontMatterVariables() {
         config: config
       }
     ));
-    cb(null, file);
+    done(null, file);
   });
 }
 

@@ -105,6 +105,6 @@ gulp.task('build-templates', function() {
     .pipe(gulp.dest('dist'));
 });
 
-gulp.task('build', ['clean'], function(cb) {
-  runSequence('build-copy', 'build-images', 'build-icons', 'build-scripts', 'build-styles', 'build-compass', 'build-html', 'build-markdown', 'build-templates', cb);
+gulp.task('build', ['clean'], function(done) {
+  runSequence('build-copy', 'build-images', 'build-icons', 'build-scripts', 'build-styles', 'build-compass', 'build-html', 'build-markdown', 'build-templates', done);
 });
