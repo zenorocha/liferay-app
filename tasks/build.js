@@ -53,7 +53,8 @@ gulp.task('build-icons', function() {
     }))
     .pipe(plugins.iconfont({
       fontName: 'icons',
-      normalize: true
+      normalize: true,
+      log: function() {}
     }))
     .pipe(plugins.if(config.optimizeStyle, util.buildCss()))
     .pipe(gulp.dest('dist/public/images/icons'));
