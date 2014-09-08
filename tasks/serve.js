@@ -28,8 +28,10 @@ gulp.task('serve', ['build'], function() {
   gutil.log('Serving static', gutil.colors.cyan('public/'));
   app.serveStatic('/', path.join(process.cwd(), 'dist/public'));
 
-  gutil.log('Setting locale', gutil.colors.cyan(config.defaultLocale));
-  app.setLocale(config.defaultLocale);
+  if (config.defaultLocale) {
+    gutil.log('Setting locale', gutil.colors.cyan(config.defaultLocale));
+    app.setLocale(config.defaultLocale);
+  }
 
   gutil.log('Compiling templates in', gutil.colors.cyan('dist/'));
   app.getTemplateEngine().compileTemplates('dist', app.getLocale(), {}, function() {
