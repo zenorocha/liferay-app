@@ -1,5 +1,6 @@
 'use strict';
 
+var fs = require('fs');
 var gulp = require('gulp');
 var gutil = require('gulp-util');
 var madvoc = require('madvoc-route');
@@ -18,8 +19,11 @@ gulp.task('serve', ['build'], function() {
 
   app.setRouteFormat(config.routeFormat);
 
-  gutil.log('Routing', gutil.colors.cyan('routes.txt'));
-  app.setRouteConfigurator(new madvoc.RouteConfigurator('dist/routes.txt'));
+  var routesFilepath = 'dist/routes.txt';
+  if (fs.existsSync(routesFilepath)) {
+    gutil.log('Routing', gutil.colors.cyan(routesFilepath));
+    app.setRouteConfigurator(new madvoc.RouteConfigurator(routesFilepath));
+  }
 
   gutil.log('Serving static', gutil.colors.cyan('public/'));
   app.serveStatic('/', path.join(process.cwd(), 'dist/public'));
