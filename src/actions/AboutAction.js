@@ -1,13 +1,13 @@
 'use strict';
 
 var util = require('util');
-var BaseAction = require('../../tasks/lib/BaseAction');
+var liferay = require('liferay-sdk');
 
 function AboutAction() {
-  BaseAction.call(this);
+  liferay.BaseAction.call(this);
 }
 
-util.inherits(AboutAction, BaseAction);
+util.inherits(AboutAction, liferay.BaseAction);
 
 AboutAction.prototype.get = function(req, res) {
   var instance = this;

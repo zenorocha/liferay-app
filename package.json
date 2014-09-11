@@ -4,6 +4,8 @@
     "test": "gulp test"
   },
   "devDependencies": {
-    "liferay-sdk": "eduardolundgren/liferay-sdk"
+    "gulp": "^3.8.8",
+    "liferay-sdk": "eduardolundgren/liferay-sdk",
+    "require-dir": "^0.1.0"
   }
 }
